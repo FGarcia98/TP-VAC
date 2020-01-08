@@ -1,13 +1,14 @@
 <?php
-session_start();
-$bdd = new PDO('mysql:host=127.0.0.1;dbname=user_film', 'root','' );
+require ('database.php');
+$db = Database::connect();
+
 if(isset($_POST['formconnecxion']))
 {
     $mailconnect = htmlspecialchars($_POST['mailconnect']);
     $mdpconnect = sha1($_POST['mdpconnect']);
     if(!empty($mailconnect ) AND !empty($mdpconnect))
     {
-        $requser = $bdd->prepare("SELECT * FROM user WHERE mail = ? AND password= ?");
+        $requser = $db->prepare("SELECT * FROM user WHERE mail = ? AND password= ?");
         $requser->execute(array($mailconnect, $mdpconnect));
         $userexist = $requser->rowCount();
         if($userexist == 1)

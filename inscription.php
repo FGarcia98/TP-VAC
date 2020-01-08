@@ -1,5 +1,6 @@
 <?php
-$bdd = new PDO('mysql:host=127.0.0.1;dbname=user_film', 'root','' );
+require ('database.php');
+$db = Database::connect();
 
 if(isset($_POST['Register']))
 {
@@ -16,20 +17,20 @@ if(isset($_POST['Register']))
 		{ 
 			if(filter_var($mail, FILTER_VALIDATE_EMAIL))
 			{
-				$reqpseudo = $bdd->prepare("SELECT * FROM user WHERE pseudo = ?");
+					$reqpseudo = $db->prepare("SELECT * FROM user WHERE pseudo = ?");
 					$reqpseudo->execute(array($pseudo));
 					$pseudoexist =$reqpseudo->rowCount();
 					if($pseudoexist == 0)
 					{
 
-							$reqmail = $bdd->prepare("SELECT * FROM user WHERE mail = ?");
+							$reqmail = $db->prepare("SELECT * FROM user WHERE mail = ?");
 							$reqmail->execute(array($mail));
 							$mailexist =$reqmail->rowCount();
 							if($mailexist == 0)
 							{
 								if($password == $confpassword)
 								{
-									$NewUser = $bdd->prepare("INSERT INTO user(pseudo, mail, password) VALUES(?,?,?)");
+									$NewUser = $db->prepare("INSERT INTO user(pseudo, mail, password) VALUES(?,?,?)");
 									$NewUser->execute(array($pseudo, $mail, $password));
 									$_SESSION['comptecree'] = "Votre compte a bien été crée";
 									header('Location: connexion.php ');
