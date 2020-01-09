@@ -33,7 +33,7 @@ if(isset($_POST['Register']))
 									$NewUser = $db->prepare("INSERT INTO user(pseudo, mail, password) VALUES(?,?,?)");
 									$NewUser->execute(array($pseudo, $mail, $password));
 									$_SESSION['comptecree'] = "Votre compte a bien été crée";
-									header('Location: connexion.php ');
+									header('Location: index.php ');
 
 								}
 								else
@@ -123,7 +123,7 @@ if(isset($_POST['Register']))
 			    			</div>
 			    			
 			    			<input type="submit" name="Register" class="btn btn-info btn-block">
-							<a href="connexion.php" >Déjà inscrit ? connexion</a>
+							<a href="index.php" >Déjà inscrit ? connexion</a>
 			    		
 						</form>
 						<?php
