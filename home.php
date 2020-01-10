@@ -1,14 +1,15 @@
 <?php
+session_start();
 require ('database.php');
-$db = Database::connect();
+$db = Database::connect();//Appelle de la fonction connect() de la classe Database -> $db 
 
-if(isset($_GET['id_user']) AND $_GET['id_user'] > 0)
+if(isset($_GET['id_user']))//si id existe elle affiche la page
 {
     
-    $getid = intval($_GET['id_user']);
-    $requser = $db->prepare('SELECT * FROM user WHERE id_user= ?');
+    $getid = intval($_GET['id_user']);//intval sécurise id dans url 
+    $requser = $db->prepare('SELECT * FROM user WHERE id_user= ?'); // On recherche si l'id user existe
     $requser->execute(array($getid));
-    $userinfo = $requser->fetch(); 
+    $userinfo = $requser->fetch(); //Va chercher les informations
 
 ?>
 <!DOCTYPE html>

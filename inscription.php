@@ -1,64 +1,57 @@
 <?php
 require ('database.php');
-$db = Database::connect();
+$db = Database::connect();//Appelle de la fonction connect() de la classe Database -> $db 
 
-if(isset($_POST['Register']))
+if(isset($_POST['Register']))//Formulaire remplis
 {
-	$pseudo = htmlspecialchars($_POST['pseudo']);
+	$pseudo = htmlspecialchars($_POST['pseudo']);//Sécurité évite les injections de code (htmlspecialchars)
 	$mail = htmlspecialchars($_POST['mail']);
-	$password = sha1($_POST['password']);
+	$password = sha1($_POST['password']);//Sécurité mots de passe (sha1)
 	$confpassword = sha1($_POST['confpassword']);
-	if(!empty($_POST['pseudo']) AND !empty($_POST['mail']) AND !empty($_POST['password']) AND !empty($_POST['confpassword']))
+	if(!empty($_POST['pseudo']) AND !empty($_POST['mail']) AND !empty($_POST['password']) AND !empty($_POST['confpassword']))//Si les variable du formulaire sont différent de vide 
 	{
 		
 
-		$pseudolength = strlen($pseudo);
-		if($pseudolength <= 255)
+		$pseudolength = strlen($pseudo);//strlen compte le nombre de caractères de $pseudo
+		if($pseudolength <= 255)//Vérifie si le pseudo est inférieur ou égal à 255
 		{ 
-			if(filter_var($mail, FILTER_VALIDATE_EMAIL))
-			{
-					$reqpseudo = $db->prepare("SELECT * FROM user WHERE pseudo = ?");
+					$reqpseudo = $db->prepare("SELECT * FROM user WHERE pseudo = ?");//On vérifie si le pseudo existe déjà dans la bdd
 					$reqpseudo->execute(array($pseudo));
-					$pseudoexist =$reqpseudo->rowCount();
-					if($pseudoexist == 0)
+					$pseudoexist = $reqpseudo->rowCount();//Permet de vérifier si le pseudo existe en comptant avec rowCount()
+					if($pseudoexist == 0)//Si égale a 0 alors le pseudo est libre d'étre utiliser
 					{
 
-							$reqmail = $db->prepare("SELECT * FROM user WHERE mail = ?");
-							$reqmail->execute(array($mail));
-							$mailexist =$reqmail->rowCount();
-							if($mailexist == 0)
+						$reqmail = $db->prepare("SELECT * FROM user WHERE mail = ?");
+						$reqmail->execute(array($mail));
+						$mailexist = $reqmail->rowCount();
+						if($mailexist == 0)
+						{
+							if($password == $confpassword)//Si les mots de passe correspondent 
 							{
-								if($password == $confpassword)
-								{
-									$NewUser = $db->prepare("INSERT INTO user(pseudo, mail, password) VALUES(?,?,?)");
-									$NewUser->execute(array($pseudo, $mail, $password));
-									$_SESSION['comptecree'] = "Votre compte a bien été crée";
-									header('Location: index.php ');
+								$NewUser = $db->prepare("INSERT INTO user(pseudo, mail, password) VALUES(?,?,?)");//On insert les données du nouvelle utilsateur dans la bdd 
+								$NewUser->execute(array($pseudo, $mail, $password));//Met les valeurs dans un tableau
+								$_SESSION['comptecree'] = "Votre compte a bien été crée";
+								header('Location: index.php ');
 
-								}
-								else
-								{
-							
-									$erreur = "Vos mots de passe ne correspondent pas !";
-								}
-					
-							
 							}
 							else
 							{
-								$erreur = "Adresse mail déja utiliser";
+						
+								$erreur = "Vos mots de passe ne correspondent pas !";
 							}
-					}
 				
+						
+						}
+						else
+						{
+							$erreur = "Adresse mail déja utiliser";
+						}
+					}
 					else
 					{
 						$erreur = "Pseudo déja utilier";
 					}	
-			}	
-			else
-			{
-				$erreur = "Votre addresse mail n'est pas valide";
-			}
+			
 		}
 		else
 		{

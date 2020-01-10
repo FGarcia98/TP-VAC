@@ -1,23 +1,24 @@
 <?php
+session_start();
 require ('database.php');
-$db = Database::connect();
+$db = Database::connect();//Appelle de la fonction connect() de la classe Database -> $db 
 
-if(isset($_POST['formconnecxion']))
+if(isset($_POST['formconnecxion']))//formulaire remplie
 {
     $mailconnect = htmlspecialchars($_POST['mailconnect']);
     $mdpconnect = sha1($_POST['mdpconnect']);
     if(!empty($mailconnect ) AND !empty($mdpconnect))
     {
-        $requser = $db->prepare("SELECT * FROM user WHERE mail = ? AND password= ?");
+        $requser = $db->prepare("SELECT * FROM user WHERE mail = ? AND password= ?");//Vérifie si les données inscrit sont cohérente entre celle de la bdd
         $requser->execute(array($mailconnect, $mdpconnect));
-        $userexist = $requser->rowCount();
-        if($userexist == 1)
+        $userexist = $requser->rowCount();//Permet de vérifier si le pseudo existe en comptant avec rowCount()
+        if($userexist == 1)// 1 = utilisateur existe
         {
-            $userinfo = $requser->fetch();
-            $_SESSION['id_user'] = $userinfo['id_user'];
+            $userinfo = $requser->fetch();//fetch() pour recevoir les informations
+            $_SESSION['id_user'] = $userinfo['id_user'];//On met les informations dans des variables de session 
             $_SESSION['pseudo'] = $userinfo['pseudo'];
             $_SESSION['mail'] = $userinfo['mail'];
-            header("Location: home.php?id_user=".$_SESSION['id_user']);
+            header("Location: home.php?id_user=".$_SESSION['id_user']);//On renvoie l'utilisateur sur le site principale avec l'id de l'utisateur
 
         }
         else
@@ -58,7 +59,7 @@ if(isset($_POST['formconnecxion']))
                             <input type="email" name="mailconnect" placeholder="Mail"/>
                             <input type="password" name="mdpconnect" placeholder="Password"/>
                             <input type="submit" class="btn btn-info btn-block" name="formconnecxion" value="Se connecter" />
-                            <a href="inscription.php" >Pas encore inscrit ?</a>
+                            <a href="inscription.php" >Pas encore inscrits ?</a>
 						</form>
 						<?php
 						if(isset($erreur))
