@@ -15,23 +15,21 @@ if(isset($_POST['Register']))//Formulaire remplis
 		$pseudolength = strlen($pseudo);//strlen compte le nombre de caractères de $pseudo
 		if($pseudolength <= 255)//Vérifie si le pseudo est inférieur ou égal à 255
 		{ 
-					$reqpseudo = $db->prepare("SELECT * FROM user WHERE pseudo = ?");//On vérifie si le pseudo existe déjà dans la bdd
-					$reqpseudo->execute(array($pseudo));
-					$pseudoexist = $reqpseudo->rowCount();//Permet de vérifier si le pseudo existe en comptant avec rowCount()
-					if($pseudoexist == 0)//Si égale a 0 alors le pseudo est libre d'étre utiliser
+					$reqpseudomail =$db->prepare("SELECT * FROM user WHERE pseudo='$pseudo'.mail='$mail'");//On vérifie si le pseudo existe déjà dans la bdd
+					$reqpseudomail->execute(array($pseudo,$mail));
+					$pseudoexistmail = $reqpseudomail->rowCount();//Permet de vérifier si le pseudo existe en comptant avec rowCount()
+					if($pseudoexistmail == 0)//Si égale a 0 alors le pseudo est libre d'étre utiliser
 					{
 
-						$reqmail = $db->prepare("SELECT * FROM user WHERE mail = ?");
-						$reqmail->execute(array($mail));
-						$mailexist = $reqmail->rowCount();
-						if($mailexist == 0)
-						{
+						
 							if($password == $confpassword)//Si les mots de passe correspondent 
 							{
 								$NewUser = $db->prepare("INSERT INTO user(pseudo, mail, password) VALUES(?,?,?)");//On insert les données du nouvelle utilsateur dans la bdd 
 								$NewUser->execute(array($pseudo, $mail, $password));//Met les valeurs dans un tableau
 								$_SESSION['comptecree'] = "Votre compte a bien été crée";
-								header('Location: index.php ');
+								?>
+								<meta http-equiv="refresh" content="0;URL=index.php">
+								<?php
 
 							}
 							else
@@ -41,15 +39,11 @@ if(isset($_POST['Register']))//Formulaire remplis
 							}
 				
 						
-						}
-						else
-						{
-							$erreur = "Adresse mail déja utiliser";
-						}
+				
 					}
 					else
 					{
-						$erreur = "Pseudo déja utilier";
+						$erreur = "Pseudo déja utilier ou mail";
 					}	
 			
 		}
