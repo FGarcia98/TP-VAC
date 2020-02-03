@@ -1,6 +1,6 @@
 <?php
-require ('database.php');
-$db = Database::connect();//Appelle de la fonction connect() de la classe Database -> $db 
+include('database.php');
+
 
 if(isset($_POST['Register']))//Formulaire remplis
 {
